@@ -1,4 +1,4 @@
-# NN-letter-recognition
+# Neural networks: letter recognition
 
 ## Multilayer Perceptron
 
