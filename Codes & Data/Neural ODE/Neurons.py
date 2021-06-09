@@ -22,7 +22,7 @@ def adjoint_function(y_t, a_t, weights_coef):
 
 
 class HiddenNeuron:
-    def __init__(self, step):  # нужно добавлять время видимо
+    def __init__(self, step): 
         self.weights_prev = []
         self.weights_next = []
         self.z_values = []
@@ -56,7 +56,7 @@ class InputNeuron():
 
 
 class OutputNeuron:
-    def __init__(self, step):  # нужно добавлять время видимо
+    def __init__(self, step): 
         self.weights_prev = []
         self.weights_next = []
         self.z_values = []
