@@ -7,8 +7,8 @@ from numpy.linalg import LinAlgError
 from Neurons import HiddenNeuron, OutputNeuron, InputNeuron
 
 
-def der_func_theta(zw_value, z_value):
-    return 2 * math.exp(-zw_value) * sum(z_value) / pow(1 + math.exp(-zw_value), 2)
+def der_func_theta(zw_value, z_value, a_value):
+    return a_value * 2 * math.exp(-zw_value) * z_value / pow(1 + math.exp(-zw_value), 2)
 
 
 def generator(t, i, j):
@@ -134,16 +134,25 @@ class ODEFunc:
             return self.newton_method(binary_data, 0)
         return self.matrix.dot(np.reshape(np.hstack([board_a, board_z]), (len(board_a) * 2, 1)))
 
-    def correct_weights(self):
+       def correct_weights(self):
         for i in range(len(self.struct) - 1):
+            sum_z_start = []
+            sum_a_start = []
+            sum_z_finish = []
+            sum_a_finish = []
             for j in range(len(self.struct[i])):
-                left_neuron = self.struct[i][j]
-                left_neuron_der = left_neuron.result_a * der_func_theta(left_neuron.z_values, left_neuron.initial_z)
-                for y in range(len(self.struct[i + 1])):
-                    right_neuron = self.struct[i + 1][y]
-                    left_neuron.weights_next[j] += 0.1 * (right_neuron.result_a *
-                                                          der_func_theta(left_neuron.result_z, right_neuron.initial_z)
-                                                          - left_neuron_der)
+                sum_z_start.append(sum(self.struct[i][j].z_values))
+                sum_a_start.append(sum(self.struct[i][j].a_values))
+                sum_z_finish.append(sum(self.struct[i][j].resukt_z))
+                sum_a_finish.append(sum(self.struct[i][j].result_a))
+            for j in range(len(self.struct[i+1])):
+                right_neuron = self.struct[i+1][j]
+                zw_t1 = np.array(right_neuron.coef) * np.array(sum_z_finish)
+                zw_t0 = np.array(right_neuron.coef) * np.array(sum_z_start)
+                for y in range(len(self.struct[i])):
+                    t_0 = der_func_theta(zw_t0, sum_z_start[y], sum_a_start)
+                    t_1 = der_func_theta(zw_t1, sum_z_finish[y], sum_a_finish)
+                    self.struct[i][y].weights_next[j] -= 0.1 * (t_1-t_0)
 
     def newton_method(self, binary_data, counter):
         right_board_a = self.shooting_forward()
