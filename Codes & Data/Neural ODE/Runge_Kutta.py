@@ -26,6 +26,6 @@ def runge_kutta_system(adjoint, y_initial, weights_coef, function_a, function_y,
     res_a = 0
     for i in range(len(y_t)):
         res_y += y_t[i] * weights_coef[i]
-        res_a += a_t[i] * weights_coef[i]
+        res_a += a_t[i]
 
     return res_y, res_a
